@@ -24,8 +24,9 @@ var prev_button = document.getElementById("prev");
 var next_button = document.getElementById("next");
 
 var album_cover = document.getElementById("album"),
-	album_deg,
-	album_speed_roatation = 10;
+	album_deg = 0,
+	album_speed_roatation = 10,
+	album_interval;
 
 var music_path = "assets/audio/";
 var music = ["Justin_Timberlake-Say_something.mp3"];
@@ -53,22 +54,71 @@ function play_stop() {
 			audio.play();
 			play_button.setAttribute("status", "play");
 			play_button.innerHTML = play_button.innerHTML.replace("play", "pause");
+
+			album_rotation_start();
 			break;
 
 		case "play":
 			audio.pause();
 			play_button.setAttribute("status", "pause");
 			play_button.innerHTML = play_button.innerHTML.replace("pause", "play");
+			album_rotation_stop();
 			break;
 	}
 }
 
 function album_rotation() {
-	album_deg = audio.currentTime;
-	album_cover.style.transform = "rotate(" + album_deg * Math.PI * album_speed_roatation + "deg)";
+	album_deg = audio.currentTime * Math.PI * album_speed_roatation;
+	album_cover.style.transform = "rotate(" + album_deg + "deg)";
 }
 function album_rotation_start() {
-	setInterval(album_rotation, 10);
+	album_interval = setInterval(album_rotation, 10);
 }
+function album_rotation_stop() {
+	clearInterval(album_interval);
+}
+
+var start_X, start_Y, current_X, current_Y, start_angle, stage_angle, destination_angle, R2D, drag = false;
+
+var center = {
+	x: 0,
+	y: 0
+};
+
+album_cover.onmousedown = function(e) {
+	drag = true;
+
+	var _ref = this.getBoundingClientRect(), top = _ref.top, left = _ref.left, height = _ref.height, width = _ref.width;
+
+    center = {
+      x: left + (width / 2),
+      y: top + (height / 2)
+    }
+
+	start_X = e.pageX - center.x,
+	start_Y = e.pageY - center.y;
+	start_angle = (180 / Math.PI) * Math.atan2(start_Y, start_X);
+}
+document.onmousemove = function(e) {
+	if (drag) {
+		current_X = e.pageX - center.x,
+		current_Y = e.pageY - center.y;
+
+		stage_angle = (180 / Math.PI) * Math.atan2(current_Y, current_X);
+		destination_angle = stage_angle - start_angle;
+		completed_angle = album_deg + destination_angle;
+
+	    album_cover.style.transform = "rotate(" + completed_angle + "deg)";
+	}
+}
+album_cover.onmouseup = function(e) {
+	drag = false;
+	album_deg += destination_angle;
+}
+
+function rewind_audio() {
+
+}
+
 play_button.addEventListener("click", play_stop);
 volume.addEventListener('input', volume_on_change, false);
