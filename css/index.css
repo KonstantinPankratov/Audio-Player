@@ -46,7 +46,19 @@ body {
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: center center;
+
+	cursor: move;
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
 }
+
+#cover:active{
+	cursor: grabbing;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
+}
+
 #cover:after {
 	content: "";
 	position: absolute;
