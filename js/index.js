@@ -138,21 +138,22 @@ album_cover.onmousedown = function(e) {
 	      y: top + (height / 2)
 	    }
 
-		start_X = e.pageX - center.x,
-		start_Y = e.pageY - center.y;
-		start_angle = (180 / Math.PI) * Math.atan2(start_Y, start_X);
+		start_X = e.pageX,
+		start_Y = e.pageY;
 	}
 }
 document.onmousemove = function(e) {
 	if (drag && readyToRewind) {
-		current_X = e.pageX - center.x,
-		current_Y = e.pageY - center.y;
+		current_X = e.pageX,
+		current_Y = e.pageY;
 
-		stage_angle = (180 / Math.PI) * Math.atan2(current_Y, current_X);
+		start_angle = Math.atan2((start_Y - center.y) ,(start_X - center.x)) *  (180 / Math.PI);
+		stage_angle = Math.atan2((current_Y - center.y) ,(current_X - center.x)) *  (180 / Math.PI);
 		
-		destination_angle = stage_angle - start_angle;
+		destination_angle = (stage_angle - start_angle);
 
 		completed_angle = album_deg + destination_angle;
+		album_deg = album_deg + destination_angle;
 
 		if (completed_angle < 0) {
 			completed_angle = 360 + completed_angle;
@@ -160,15 +161,21 @@ document.onmousemove = function(e) {
 			completed_angle = completed_angle - 360;
 		}
 
-		audio.currentTime = audio_duration / 360 * completed_angle;
+		if (destination_angle < 0) {
+			audio.currentTime -= audio_duration / 360 * completed_angle / 100;
+		} else {
+			audio.currentTime += audio_duration / 360 * completed_angle / 100;
+		}
 
-	    album_cover.style.transform = "rotate(" + completed_angle + "deg)";
+	    album_cover.style.transform = "rotate(" + album_deg + "deg)";
 
 	    remaining_time();
 
 	    if (play_button.getAttribute("status") != "pause") {
 	    	album_rotation_stop();
 	    }
+	    start_X = current_X,
+		start_Y = current_Y;
 	}
 }
 album_cover.onmouseup = function(e) {
