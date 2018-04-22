@@ -245,7 +245,7 @@ input[type="range"]::-ms-tooltip {
 	font-size: 15px;
 	color: rgba(0, 0, 0, 1);
 }
-#time{
+#time {
 	width: 60px;
 	position: absolute;
 	font-size: 12px;
@@ -253,7 +253,7 @@ input[type="range"]::-ms-tooltip {
 	bottom: 10px;
 	left: 50px;
 }
-#time #duration-time{
+#time #duration-time {
 	font-weight: bold;
 	color: rgba(0, 0, 0, 0.3);
 }
